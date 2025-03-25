@@ -13,7 +13,7 @@ trait HasProps
     public $using_props = true;
     protected static string $__prop_name    = 'props';
     public static bool $__prop_event_active = true;
-
+    
     public static function bootHasProps()
     {
         static::addGlobalScope('with_prop', function ($query) {
@@ -32,6 +32,10 @@ trait HasProps
         $this->mergeFillable([
             self::$__prop_name
         ]);
+    }
+
+    protected function getPropLists(): array{
+        return [];
     }
 
     public function getPropsQuery(): array
