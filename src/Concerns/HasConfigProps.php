@@ -32,8 +32,7 @@ trait HasConfigProps
         return $this->prop_attributes ?? [];
     }
 
-    public function propResource(object|string $model, mixed $resource = null, array $excepts = [])
-    {
+    public function propResource(object|string $model, mixed $resource = null, array $excepts = []){
         $raw_morph = (is_object($model) ? $model->getMorphClass() : $model);
         $morph = $this->{"prop_" . \strtolower($raw_morph)};
         if (isset($morph)) {
