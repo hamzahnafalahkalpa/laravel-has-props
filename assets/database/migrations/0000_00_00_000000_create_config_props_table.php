@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Hanafalah\LaravelHasProps\Models\ConfigProps;
+use Hanafalah\LaravelHasProps\Models\ConfigProp;
 
 return new class extends Migration
 {
@@ -13,7 +13,7 @@ return new class extends Migration
 
     public function __construct()
     {
-        $this->__table = app(config('database.models.ConfigProps', ConfigProps::class));
+        $this->__table = app(config('database.models.ConfigProp', ConfigProp::class));
     }
 
     /**
