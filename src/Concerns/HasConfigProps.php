@@ -28,13 +28,16 @@ trait HasConfigProps
         });
     }
 
-    public function propResource(object|string $model, mixed $resource = null, array $excepts = [])
-    {
+    public function getPropAttributes(): array{
+        return $this->prop_attributes ?? [];
+    }
+
+    public function propResource(object|string $model, mixed $resource = null, array $excepts = []){
         $raw_morph = (is_object($model) ? $model->getMorphClass() : $model);
         $morph = $this->{"prop_" . \strtolower($raw_morph)};
         if (isset($morph)) {
             $request    = new Request($morph);
-            $resource ??= $this->prop_attributes[$raw_morph];
+            $resource ??= $this->getPropAttributes()[$raw_morph] ?? null;
             if (!isset($resource)) throw new \Exception('Prop resource not found', 422);
 
             if (is_array($resource)) {
@@ -73,7 +76,7 @@ trait HasConfigProps
                 $attr = (new $attr($model))->toArray();
             }
         } else {
-            $model_prop = $this->prop_attributes[$model->getMorphClass()];
+            $model_prop = $this->getPropAttributes()[$model->getMorphClass()];
             if (isset($model_prop)) {
                 if (is_string($model_prop) && class_exists($model_prop)) {
                     $attr = $this->runResource($model_prop, $model);
