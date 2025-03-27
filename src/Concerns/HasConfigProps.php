@@ -4,7 +4,7 @@ namespace Hanafalah\LaravelHasProps\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Hanafalah\LaravelHasProps\Models\ConfigProp;
+use Illuminate\Support\Str;
 
 trait HasConfigProps
 {
@@ -21,7 +21,7 @@ trait HasConfigProps
                     $referenceModel = $referenceModel::find($config->reference_id);
 
                     list($new) = self::propGenerate($model, $lists);
-                    $referenceModel->setAttribute('prop_' . strtolower($config->subject_type), $new);
+                    $referenceModel->setAttribute('prop_' . Str::snake($config->subject_type), $new);
                     $referenceModel->saveQuietly();
                 }
             }
