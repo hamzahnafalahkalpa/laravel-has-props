@@ -34,6 +34,10 @@ trait HasProps
         ]);
     }
 
+    public function boolValidate(mixed $bool): bool{
+        return filter_var($this->{$bool} ?? false, FILTER_VALIDATE_BOOLEAN);
+    }
+
     protected function getPropLists(): array{
         return [];
     }
