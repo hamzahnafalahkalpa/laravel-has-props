@@ -5,8 +5,7 @@ namespace Hanafalah\LaravelHasProps\Models;
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 
-class ConfigProp extends BaseModel
-{
+class ConfigProp extends BaseModel{
     use HasProps;
 
     protected $keyType        = "string";

@@ -11,7 +11,7 @@ trait HasConfigProps
     public static function bootHasConfigProps()
     {
         static::updating(function ($model) {
-            if ($model->getConnectionName() !== app(config('database.models.ConfigProp'))->getConnectionName()) return;
+            if (method_exists($model, 'getConnectionName') && $model->getConnectionName() !== app(config('database.models.ConfigProp'))->getConnectionName()) return;
             $configs = $model->configFromSubject()->get();
             foreach ($configs as $config) {
                 if (!isset($config->list_config)) continue;
