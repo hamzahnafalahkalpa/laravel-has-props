@@ -18,12 +18,6 @@ class ConfigProp extends BaseModel{
         'props',
     ];
 
-    public function reference()
-    {
-        return $this->morphTo();
-    }
-    public function subject()
-    {
-        return $this->morphTo();
-    }
+    public function reference(){return $this->morphTo();}
+    public function subject(){return $this->morphTo();}
 }
