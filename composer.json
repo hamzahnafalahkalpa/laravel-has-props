@@ -13,8 +13,7 @@
     ],
     "require": {
         "stancl/virtualcolumn": "^1.4",
-        "hanafalah/laravel-support": "1.x-dev as 1.0",
-        "staudenmeir/eloquent-json-relations": "^1.14"
+        "hanafalah/laravel-support": "1.x-dev as 1.0"
     },
     "extra": {
         "laravel": {
