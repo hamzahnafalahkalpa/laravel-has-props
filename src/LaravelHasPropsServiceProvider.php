@@ -13,12 +13,7 @@ class LaravelHasPropsServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->registerMainClass(LaravelHasProps::class)
-            ->registers([
-                'Model',
-                'Database',
-                'Migration'
-            ]);
+        $this->registerMainClass(LaravelHasProps::class)->registers(['*']);
     }
 
     /**

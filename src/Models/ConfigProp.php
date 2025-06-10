@@ -5,8 +5,7 @@ namespace Hanafalah\LaravelHasProps\Models;
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
 use Hanafalah\LaravelSupport\Models\BaseModel;
 
-class ConfigProp extends BaseModel
-{
+class ConfigProp extends BaseModel{
     use HasProps;
 
     protected $keyType        = "string";
@@ -19,12 +18,6 @@ class ConfigProp extends BaseModel
         'props',
     ];
 
-    public function reference()
-    {
-        return $this->morphTo();
-    }
-    public function subject()
-    {
-        return $this->morphTo();
-    }
+    public function reference(){return $this->morphTo();}
+    public function subject(){return $this->morphTo();}
 }

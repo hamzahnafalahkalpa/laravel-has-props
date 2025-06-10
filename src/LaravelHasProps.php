@@ -2,6 +2,6 @@
 
 namespace Hanafalah\LaravelHasProps;
 
-use Hanafalah\LaravelHasProps\Supports\BaseModuleRegional;
+use Hanafalah\LaravelSupport\Supports\PackageManagement;
 
-class LaravelHasProps extends BaseModuleRegional {}
+class LaravelHasProps extends PackageManagement {}

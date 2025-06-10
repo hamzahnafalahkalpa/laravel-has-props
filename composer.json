@@ -13,7 +13,7 @@
     ],
     "require": {
         "stancl/virtualcolumn": "^1.4",
-        "hanafalah/laravel-support": "1.x"
+        "hanafalah/laravel-support": "1.x-dev as 1.0"
     },
     "extra": {
         "laravel": {
@@ -21,7 +21,5 @@
                 "Hanafalah\\LaravelHasProps\\LaravelHasPropsServiceProvider"
             ]
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": false
+    }
 }

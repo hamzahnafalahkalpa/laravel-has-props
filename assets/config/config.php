@@ -9,7 +9,6 @@ return [
     ],
     'database' => [
         'models' => [
-            'ConfigProp' => LaravelHasPropsModels\ConfigProp::class,
         ]
     ]
 ];
