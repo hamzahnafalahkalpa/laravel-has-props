@@ -16,10 +16,10 @@ trait HasConfigProps
             foreach ($configs as $config) {
                 if (!isset($config->list_config)) continue;
                 $lists = $config->list_config;
+                dd($lists);
                 if ($config && $config->reference_type && $config->reference_id) {
                     $referenceModel = app(Relation::morphMap()[$config->reference_type] ?? $config->reference_type);
                     $referenceModel = $referenceModel::find($config->reference_id);
-
                     list($new) = self::propGenerate($model, $lists);
                     $referenceModel->setAttribute('prop_' . Str::snake($config->subject_type), $new);
                     $referenceModel->saveQuietly();
