@@ -63,7 +63,7 @@ trait HasProps
      * @param  string  $column
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeProp($builder, string $column = null): \Illuminate\Database\Eloquent\Builder
+    public function scopeProp($builder, ?string $column = null): \Illuminate\Database\Eloquent\Builder
     {
         return $builder->addSelect($column ?? $this->getDataColumn());
     }
