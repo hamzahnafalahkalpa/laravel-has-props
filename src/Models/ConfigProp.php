@@ -8,6 +8,8 @@ use Hanafalah\LaravelSupport\Models\BaseModel;
 class ConfigProp extends BaseModel{
     use HasProps;
 
+    public $incrementing      = false;
+    protected $primaryKey     = "id";      
     protected $keyType        = "string";
     protected $fillable       = [
         'id',
