@@ -4,9 +4,10 @@ namespace Hanafalah\LaravelHasProps\Models;
 
 use Hanafalah\LaravelHasProps\Concerns\HasProps;
 use Hanafalah\LaravelSupport\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 class ConfigProp extends BaseModel{
-    use HasProps;
+    use HasUlids, HasProps;
 
     public $incrementing      = false;
     protected $primaryKey     = "id";      
