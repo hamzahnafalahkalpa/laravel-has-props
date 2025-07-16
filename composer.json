@@ -13,7 +13,7 @@
     ],
     "require": {
         "stancl/virtualcolumn": "^1.4",
-        "hanafalah/laravel-support": "dev-main"
+        "hanafalah/laravel-support": "1.x-dev as 1.0"
     },
     "extra": {
         "laravel": {
