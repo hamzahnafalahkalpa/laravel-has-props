@@ -21,6 +21,10 @@ class ConfigProp extends BaseModel{
         'props',
     ];
 
+    public static function bootHasConfigProps()
+    {
+    }
+
     public function reference(){return $this->morphTo();}
     public function subject(){return $this->morphTo();}
 }

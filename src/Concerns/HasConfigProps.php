@@ -2,6 +2,7 @@
 
 namespace Hanafalah\LaravelHasProps\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -10,18 +11,28 @@ trait HasConfigProps
 {
     public static function bootHasConfigProps()
     {
-        static::updating(function ($model) {
-            if (method_exists($model, 'getConnectionName') && $model->getConnectionName() !== app(config('database.models.ConfigProp'))->getConnectionName()) return;
-            $configs = $model->configFromSubject()->get();
-            foreach ($configs as $config) {
-                if (!isset($config->list_config)) continue;
-                $lists = $config->list_config;
-                if ($config && $config->reference_type && $config->reference_id) {
-                    $referenceModel = app(Relation::morphMap()[$config->reference_type] ?? $config->reference_type);
-                    $referenceModel = $referenceModel::find($config->reference_id);
-                    list($new) = self::propGenerate($model, $lists);
-                    $referenceModel->setAttribute('prop_' . Str::snake($config->subject_type), $new);
-                    $referenceModel->saveQuietly();
+        static::updating(function ($model) {       
+            $skip_list_config = (
+                method_exists($model, 'getConnectionName') && 
+                $model->getConnectionName() !== app(config('database.models.ConfigProp'))->getConnectionName()
+            );
+            if (!$skip_list_config) {
+                $tenant = null;
+                if (config('micro-tenant') !== null && config('micro-tenant.enabled')) {
+                    $tenant = tenancy()->tenant;
+                }
+                // event(new \Hanafalah\LaravelHasProps\Events\PropSubjectUpdated($model,$tenant));
+                $configs = $model->configFromSubject()->get();            
+                foreach ($configs as $config) {
+                    if (!isset($config->list_config)) continue;
+                    $lists = $config->list_config;
+                    if ($config && $config->reference_type && $config->reference_id) {
+                        $referenceModel = app(Relation::morphMap()[$config->reference_type] ?? $config->reference_type);
+                        $referenceModel = $referenceModel::find($config->reference_id);
+                        list($lists, $new) = $model->addListConfig($config,$model,$lists);
+                        $referenceModel->setAttribute('prop_' . Str::snake($config->subject_type), $new);
+                        $referenceModel->saveQuietly();
+                    }
                 }
             }
         });
@@ -53,23 +64,24 @@ trait HasConfigProps
         return null;
     }
 
-    public function configFromReference()
-    {
-        return $this->morphOneModel('ConfigProp', 'reference');
-    }
+    public function configFromReference(){return $this->morphOneModel('ConfigProp', 'reference');}
+    public function configFromSubject(){return $this->morphOneModel('ConfigProp', 'subject');}
 
-    public function configFromSubject()
-    {
-        return $this->morphOneModel('ConfigProp', 'subject');
-    }
-
-    private function runResource($resource, $data): array
-    {
+    private function runResource($resource, $data): array{
         return (new $resource($data))->resolve();
     }
 
-    public function sync($model, mixed $attr = null)
-    {
+    public function listenProp(Model $model, mixed $attr = null){
+        $config = $this->configFromReference()->firstOrCreate([
+            'reference_type' => $this->getMorphClass(),
+            'reference_id'   => $this->getKey(),
+            'subject_type'   => $model->getMorphClass(),
+            'subject_id'     => $model->getKey()
+        ]);
+        list($new, $config) = $this->addListConfig($config, $model, $attr);
+    }
+
+    public function sync($model, mixed $attr = null){
         if (isset($attr)) {
             if (is_string($attr) && class_exists($attr)) {
                 $attr = (new $attr($model))->toArray();
@@ -95,33 +107,44 @@ trait HasConfigProps
             'subject_id'     => $model->getKey()
         ]);
 
-        list($new, $lists) = self::propGenerate($model, $attr);
-        $config->setAttribute('list_config', $lists);
-        $config->save();
+        list($new, $config) = $this->addListConfig($config, $model, $attr);
         $this->setAttribute('prop_' . strtolower($model->getMorphClass()), $new);
         $this->save();
         return $this;
     }
 
-    private static function propGenerate($model, array $attr)
-    {
+    private function addListConfig($config,$model,$attr): array{
+        list($lists, $new) = $this->propGenerate($attr, $model);
+        $config->setAttribute('list_config', $lists);
+        $config->setAttribute('current_data', $new);
+        $config->save();
+        return [$new,$config];
+    }
+
+    private function propGenerate(array $attr, ?Model $model = null){
         $new = [];
         $lists = [];
         $is_assoc = array_is_list($attr);
-        if (!$is_assoc) {
-            foreach ($attr as $key => $attribute) {
-                $new[$key] = $attribute;
-                $lists[] = $key;
-            }
-        } else {
-            foreach ($attr as $key) {
-                if (isset($model->{$key})) {
-                    $new[$key] = $model->{$key};
-                    $lists[]   = $key;
+        if (isset($model)){
+            if (!$is_assoc) {
+                foreach ($attr as $key => $attribute) {
+                    $new[$key] = $attribute;
+                    $lists[] = $key;
+                }
+            } else {
+                foreach ($attr as $key) {
+                    if (isset($model->{$key})) {
+                        $new[$key] = $model->{$key};
+                        $lists[]   = $key;
+                    }
                 }
             }
+        }else{
+            foreach ($attr as $key) {
+                $lists[] = $key;
+            }
         }
-        return [$new, $lists];
+        return [$lists, $new];
     }
 
     public function scopeSubject($builder, object $model)

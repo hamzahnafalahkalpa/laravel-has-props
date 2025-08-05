@@ -19,8 +19,8 @@ class HasCurrentScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        if (isset($model->current_checking) && $model->current_checking && in_array($model::getCurrentName(), $model->getFillable())) {
-            $builder->where($model::getCurrentName(), $model->getCurrentConstant());
+        if (isset($model->current_checking) && $model->current_checking && in_array($model->getCurrentName(), $model->getFillable())) {
+            $builder->where($model->getCurrentName(), $model->getCurrentConstant());
         }
     }
 }

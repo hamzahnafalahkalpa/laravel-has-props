@@ -6,20 +6,20 @@ trait HasCurrent
 {
     public bool $current_checking      = true;
 
-    protected static string $__current_name = 'current';
-    protected static int $__is_current      = 1;
-    protected static int $__is_not_current  = 0;
-    /**
-     * Initialize the trait.
-     *
-     * @return void
-     */
-    public function initializeHasCurrent()
-    {
-        $this->mergeFillable([
-            self::getCurrentName()
-        ]);
-    }
+    protected string $__current_name = 'current';
+    protected int $__is_current      = 1;
+    protected int $__is_not_current  = 0;
+    // /**
+    //  * Initialize the trait.
+    //  *
+    //  * @return void
+    //  */
+    // public function initializeHasCurrent()
+    // {
+    //     $this->mergeFillable([
+    //         $this->getCurrentName()
+    //     ]);
+    // }
 
     public function getConditions(): array
     {
@@ -35,7 +35,12 @@ trait HasCurrent
      */
     public function scopeIsCurrent($builder, $column = null)
     {
-        return $builder->where($column ?? self::getCurrentName(), $this->getCurrentConstant());
+        return $builder->where($column ?? $this->getCurrentName(), $this->getCurrentConstant());
+    }
+
+    public function getCurrentChecking(): bool
+    {
+        return $this->current_checking;
     }
 
     /**
@@ -44,9 +49,9 @@ trait HasCurrent
      * @param mixed $query The query builder or model instance.
      * @return bool True if the current value is set, otherwise false.
      */
-    public static function isHasCurrent($query)
+    public function isHasCurrent($query)
     {
-        return in_array(self::getCurrentName(), $query->getFillable());
+        return in_array($this->getCurrentName(), $query->getFillable());
     }
 
     /**
@@ -55,11 +60,11 @@ trait HasCurrent
      * @param mixed $query The query builder or model instance.
      * @return void
      */
-    public static function currentChecking(&$query)
+    public function currentChecking(&$query)
     {
-        if (self::isHasCurrent($query)) {
-            if (!isset($query->{self::getCurrentName()}))
-                $query->{self::getCurrentName()} = self::getCurrentConstant();
+        if ($this->isHasCurrent($query)) {
+            if (!isset($query->{$this->getCurrentName()}))
+                $query->{$this->getCurrentName()} = $this->getCurrentConstant();
         }
     }
 
@@ -68,9 +73,9 @@ trait HasCurrent
      *
      * @return string The name of the current value.
      */
-    public static function getCurrentName(): string
+    public function getCurrentName(): string
     {
-        return self::$__current_name;
+        return $this->__current_name;
     }
 
     /**
@@ -78,9 +83,9 @@ trait HasCurrent
      *
      * @return string The value of the current value.
      */
-    public static function getCurrentConstant(): string
+    public function getCurrentConstant(): string
     {
-        return self::$__is_current;
+        return $this->__is_current;
     }
 
     /**
@@ -88,9 +93,9 @@ trait HasCurrent
      *
      * @return string The value of the not current value.
      */
-    public static function getNotCurrentConstant(): string
+    public function getNotCurrentConstant(): string
     {
-        return self::$__is_not_current;
+        return $this->__is_not_current;
     }
 
     /**
@@ -100,7 +105,7 @@ trait HasCurrent
      * @throws \Some_Exception_Class Description of the exception that may be thrown.
      * @return void
      */
-    public static function setCurrent($query, $args = null)
+    public function setCurrent($query, $args = null)
     {
         $where = [[$query->getKeyName(), "<>", $query->getKey()]];
 
@@ -122,7 +127,7 @@ trait HasCurrent
 
         /** SET CURRENT */
         $newModel->where($where)->update([
-            "current" => self::$__is_not_current
+            "current" => $this->__is_not_current
         ]);
     }
 
@@ -133,10 +138,10 @@ trait HasCurrent
      * @throws \Some_Exception_Class Description of the exception that may be thrown.
      * @return void
      */
-    public static function setOld($query)
+    public function setOld($query)
     {
-        if (self::isHasCurrent($query)) {
-            if (isset($query->{self::getCurrentName()})) self::setCurrent($query);
+        if ($this->isHasCurrent($query)) {
+            if (isset($query->{$this->getCurrentName()})) $this->setCurrent($query);
         }
     }
 }
