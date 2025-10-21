@@ -18,7 +18,6 @@ class PropSubjectUpdated
 
     public function __unserialize(array $values): void
     {
-        dd($this->tenant);
         if ($this->tenant) {
             MicroTenant::tenantImpersonate($this->tenant);
             tenancy()->initialize($this->tenant);
