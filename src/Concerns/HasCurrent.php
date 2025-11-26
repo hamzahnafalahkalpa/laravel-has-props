@@ -127,7 +127,7 @@ trait HasCurrent
 
         /** SET CURRENT */
         $newModel->where($where)->update([
-            "current" => intval($this->__is_not_current)
+            "current" => $this->__is_not_current
         ]);
     }
 
