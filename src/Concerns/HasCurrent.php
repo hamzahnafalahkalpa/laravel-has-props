@@ -63,6 +63,22 @@ trait HasCurrent
     public function currentChecking(&$query)
     {
         if ($this->isHasCurrent($query)) {
+
+            //testing only
+            $conditions = $query->getConditions() ?? [];
+            app($query::class)->where(call_user_func(function() use ($conditions, $query){
+                $where = [];
+                foreach ($conditions as $condition){
+                    if (isset($query->{$condition})){
+                        $where[] = [$condition, $query->{$condition}];
+                    }
+                }
+                $where[] = [$query->getCurrentName(), $query->getCurrentConstant()];
+                return $where;
+            }))->update([
+                $query->getCurrentName() => $query->getNotCurrentConstant()
+            ]);
+
             if (!isset($query->{$this->getCurrentName()}))
                 $query->{$this->getCurrentName()} = $this->getCurrentConstant();
         }
