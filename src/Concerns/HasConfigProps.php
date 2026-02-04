@@ -74,9 +74,9 @@ trait HasConfigProps
     public function listenProp(Model $model, mixed $attr = null){
         $config = $this->configFromReference()->firstOrCreate([
             'reference_type' => $this->getMorphClass(),
-            'reference_id'   => $this->getKey(),
+            'reference_id'   => (string) $this->getKey(),
             'subject_type'   => $model->getMorphClass(),
-            'subject_id'     => $model->getKey()
+            'subject_id'     => (string) $model->getKey()
         ]);
         list($new, $config) = $this->addListConfig($config, $model, $attr);
     }
@@ -102,9 +102,9 @@ trait HasConfigProps
         if (!isset($attr)) return $this;
         $config = $this->configFromReference()->firstOrCreate([
             'reference_type' => $this->getMorphClass(),
-            'reference_id'   => $this->getKey(),
+            'reference_id'   => (string) $this->getKey(),
             'subject_type'   => $model->getMorphClass(),
-            'subject_id'     => $model->getKey()
+            'subject_id'     => (string) $model->getKey()
         ]);
 
         list($new, $config) = $this->addListConfig($config, $model, $attr);
